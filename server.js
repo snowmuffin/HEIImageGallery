@@ -67,6 +67,6 @@ app.get('/images', async (req, res) => {
 });
 
 // 서버 실행
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
   console.log(`Proxy server is running on http://localhost:${port}`);
 });

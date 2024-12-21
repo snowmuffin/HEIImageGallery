@@ -3,6 +3,7 @@ export default {
     expo: {
       name: "heiimagegallery",
       slug: "heiimagegallery",
+      platforms: ["ios", "android", "web"],
       version: "1.0.0",
       extra: {
         AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
