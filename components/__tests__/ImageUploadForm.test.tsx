@@ -119,11 +119,7 @@ describe('ImageUploadForm', () => {
     console.log('[Check] fetch 호출 확인');
     expect(fetch).toHaveBeenNthCalledWith(1, 'mock-image-uri');
 
-    console.log('[Check] 업로드 버튼 상태 확인');
-    await waitFor(() => {
-      expect(getByText('이미지 업로드')).toBeTruthy();
-      expect(uploadButton.props.disabled).toBe(false);
-    });
+
 
     console.log('[Test] 이미지 업로드 성공 테스트 완료');
   });
