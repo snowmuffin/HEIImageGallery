@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, FlatList, Image, Text, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 
-const PROXY_SERVER_URL = 'http://localhost:3000/images'; // 프록시 서버 URL
+const PROXY_SERVER_URL = 'http://127.0.0.1:3000/images'; // 프록시 서버 URL
 
 const ImageGallery = () => {
   const [images, setImages] = useState([]);
