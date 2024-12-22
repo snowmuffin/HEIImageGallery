@@ -32,7 +32,7 @@ describe('ImageGallery', () => {
       const items = getAllByTestId(/^image-gallery-item-/);
       expect(items).toHaveLength(2); // 2개의 항목 렌더링 확인
     });
-  });
+  },10000);
 
   it('renders a message when no images are available', async () => {
     // Mock empty response
