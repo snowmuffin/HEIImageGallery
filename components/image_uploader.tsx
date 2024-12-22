@@ -53,7 +53,7 @@ const ImageUploadForm = () => {
         throw new Error('프록시 서버에서 업로드 실패');
       }
     } catch (error) {
-      console.error('Upload Error:', error);
+      console.log('Upload Error:', error);
       Alert.alert('Error', '이미지 업로드 중 문제가 발생했습니다.');
     } finally {
       setUploading(false);
