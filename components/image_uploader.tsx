@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Button, Image, StyleSheet, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-
-const PROXY_SERVER_URL = 'http://localhost:3000/upload'; // 프록시 서버 URL
+import Config from 'react-native-config'; 
+const PROXY_SERVER_URL = Config.PROXY_SERVER_URL; // 프록시 서버 URL
 
 const ImageUploadForm = () => {
   const [selectedImage, setSelectedImage] = useState<ImagePicker.ImagePickerResult | null>(null);

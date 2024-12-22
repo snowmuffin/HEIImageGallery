@@ -2,16 +2,24 @@ import React from 'react';
 import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
 import ImageUploadForm from '../image_uploader';
 import * as ImagePicker from 'expo-image-picker';
-
+import fetchMock from 'jest-fetch-mock';
 jest.mock('expo-image-picker', () => ({
   launchImageLibraryAsync: jest.fn(),
   MediaTypeOptions: { Images: 'Images' },
 }));
 
 describe('ImageUploadForm', () => {
+  beforeEach(() => {
+    fetchMock.resetMocks(); // fetch 모의 초기화
+  });
   it('displays selected image preview', async () => {
     // Mock ImagePicker
-    ImagePicker.launchImageLibraryAsync.mockResolvedValueOnce({
+    jest.mock('expo-image-picker', () => ({
+      launchImageLibraryAsync: jest.fn(),
+      MediaTypeOptions: { Images: 'Images' },
+    }));
+    
+    (ImagePicker.launchImageLibraryAsync as jest.Mock).mockResolvedValueOnce({
       canceled: false,
       assets: [{ uri: 'mock-image-uri' }],
     });
@@ -57,7 +65,15 @@ describe('ImageUploadForm', () => {
       canceled: false,
       assets: [{ uri: 'mock-image-uri' }],
     });
+    fetchMock.mockResponseOnce(async () => {
+      return new Response(new Blob(['mock image data'])).text();
+    });
 
+    // Mock fetch for proxy server upload
+    fetchMock.mockResponseOnce(
+      JSON.stringify({ message: 'Upload successful!' }), // 업로드 성공 응답
+      { status: 200 }
+    );
     const { getByText, queryByTestId } = render(<ImageUploadForm />);
 
     // 이미지 선택 버튼 클릭
@@ -77,7 +93,7 @@ describe('ImageUploadForm', () => {
       fireEvent.press(uploadButton);
     });
 
-    expect(uploadButton.props.disabled).toBe(true);
+    expect(fetch).toHaveBeenNthCalledWith(1, 'mock-image-uri');
 
     // 업로드 완료 후 버튼 상태 및 Alert 확인
     await waitFor(() => {
