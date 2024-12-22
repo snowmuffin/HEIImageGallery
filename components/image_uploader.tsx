@@ -43,7 +43,7 @@ const ImageUploadForm = () => {
         method: 'POST',
         body: formData,
       });
-
+      console.log('File URI:', fileUri);
       if (uploadResponse.ok) {
         const result = await uploadResponse.json();
         console.log('Upload result:', result);
