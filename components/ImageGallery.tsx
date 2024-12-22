@@ -42,9 +42,9 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ isDesktop }) => {
       const validImageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
       const filteredImages = data.filter((item) => {
         const extension = item.key.split('.').pop()?.toLowerCase();
-        return extension && validImageExtensions.includes(extension);
+        if (!extension) return false; // 확장자가 없는 경우 제외
+        return validImageExtensions.includes(extension);
       });
-      
  
       console.log(`총 로드된 이미지 수: ${filteredImages.length}`);
       

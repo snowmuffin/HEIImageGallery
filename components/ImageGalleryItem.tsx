@@ -1,4 +1,3 @@
-// components/ImageGalleryItem.tsx
 import React from 'react';
 import { View, Image, Text, StyleSheet } from 'react-native';
 
@@ -16,8 +15,22 @@ type ImageGalleryItemProps = {
 };
 
 const ImageGalleryItem: React.FC<ImageGalleryItemProps> = React.memo(({ item, isDesktop, imageWidth }) => {
+  const formatSize = (size: number) => {
+    if (size >= 1024 * 1024) return `${(size / (1024 * 1024)).toFixed(2)} MB`;
+    if (size >= 1024) return `${(size / 1024).toFixed(2)} KB`;
+    return `${size} bytes`;
+  };
+
+  const formatDate = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+  };
+
   return (
-    <View style={[styles.card, { width: imageWidth, marginBottom: 10 }]}>
+    <View 
+      testID={`image-gallery-item-${item.key}`} 
+      style={[styles.card, { width: imageWidth, marginBottom: 10 }]}
+    >
       <Image
         source={{ uri: item.url }}
         style={[styles.image, { width: imageWidth, height: imageWidth }]}
@@ -27,10 +40,8 @@ const ImageGalleryItem: React.FC<ImageGalleryItemProps> = React.memo(({ item, is
         <Text style={styles.infoTitle} numberOfLines={1}>
           {item.key}
         </Text>
-        <Text style={styles.infoText}>크기: {item.size} bytes</Text>
-        <Text style={styles.infoText}>
-          날짜: {new Date(item.lastModified).toLocaleString()}
-        </Text>
+        <Text style={styles.infoText}>크기: {formatSize(item.size)}</Text>
+        <Text style={styles.infoText}>날짜: {formatDate(item.lastModified)}</Text>
       </View>
     </View>
   );
@@ -41,7 +52,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 10,
     overflow: 'hidden',
-
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
@@ -49,6 +59,8 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   image: {
+    borderRadius: 10,
+    backgroundColor: '#f0f0f0', // 로딩 중 기본 배경
   },
   infoContainer: {
     padding: 10,
