@@ -1,5 +1,7 @@
+// components/ImageGallery.tsx
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, Image, Text, StyleSheet, ActivityIndicator, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, useWindowDimensions, FlatList } from 'react-native';
+import ImageGalleryItem from './ImageGalleryItem'; // 생성한 컴포넌트 경로
 
 const PROXY_SERVER_URL = 'http://localhost:3000/images';
 
@@ -10,54 +12,52 @@ type ImageItem = {
   lastModified: string;
 };
 
-const ImageGallery: React.FC = () => {
+type ImageGalleryProps = {
+  isDesktop: boolean;
+};
+
+const ImageGallery: React.FC<ImageGalleryProps> = ({ isDesktop }) => {
   const [images, setImages] = useState<ImageItem[]>([]);
   const [loading, setLoading] = useState(false);
-  const [numColumns, setNumColumns] = useState(1); // 열 수 상태 관리
+  const { width: windowWidth } = useWindowDimensions();
 
-  // 화면 크기에 따라 열 수 조정
-  useEffect(() => {
-    const { width } = Dimensions.get('window');
-    
-    if (width > 1200) {
-      setNumColumns(4); // 화면 너비가 1200 이상이면 4열
-    } else if (width > 800) {
-      setNumColumns(3); // 화면 너비가 800 이상이면 3열
-    } else if (width > 500) {
-      setNumColumns(2); // 화면 너비가 500 이상이면 2열
-    } else {
-      setNumColumns(1); // 그 이하에서는 1열
-    }
 
-    const handleResize = () => {
-      const { width } = Dimensions.get('window');
-      if (width > 1200) {
-        setNumColumns(4);
-      } else if (width > 800) {
-        setNumColumns(3);
-      } else if (width > 500) {
-        setNumColumns(2);
-      } else {
-        setNumColumns(1);
-      }
-    };
+  const numColumns = isDesktop ? 8 : 2;
 
-    // 화면 크기 변화 시 처리
-    Dimensions.addEventListener('change', handleResize);
 
-    return () => {
-      Dimensions.removeEventListener('change', handleResize);
-    };
-  }, []);
+  const imageMargin = 10;
+  const totalMargin = imageMargin * (numColumns + 1);
+  const imageWidth = (windowWidth - totalMargin) / numColumns;
 
-  // 이미지 데이터 fetching
   const fetchImages = async () => {
     setLoading(true);
     try {
       const response = await fetch(PROXY_SERVER_URL);
       if (!response.ok) throw new Error('Failed to fetch images');
       const data: ImageItem[] = await response.json();
-      setImages(data);
+      
+
+      console.log(`총 로드된 파일 수: ${data.length}`);
+      
+      const validImageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+      const filteredImages = data.filter((item) => {
+        const extension = item.key.split('.').pop()?.toLowerCase();
+        return extension && validImageExtensions.includes(extension);
+      });
+      
+ 
+      console.log(`총 로드된 이미지 수: ${filteredImages.length}`);
+      
+
+      const excludedFiles = data.filter((item) => {
+        const extension = item.key.split('.').pop()?.toLowerCase();
+        return !extension || !validImageExtensions.includes(extension);
+      });
+      if (excludedFiles.length > 0) {
+        console.log('이미지로 간주되지 않은 파일들:', excludedFiles);
+      }
+      
+      setImages(filteredImages);
     } catch (error) {
       console.error('Error fetching images:', error);
     } finally {
@@ -69,56 +69,52 @@ const ImageGallery: React.FC = () => {
     fetchImages();
   }, []);
 
+  const renderItem = ({ item }: { item: ImageItem }) => (
+    <ImageGalleryItem item={item} isDesktop={isDesktop} imageWidth={imageWidth} />
+  );
+
+  const keyExtractor = (item: ImageItem) => item.key;
+
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
+  if (images.length === 0) {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.noImagesText}>이미지가 없습니다.</Text>
+      </View>
+    );
+  }
+
   return (
-    <View style={styles.container}>
-      {loading && <ActivityIndicator size="large" color="#0000ff" />}
-      <FlatList
-        data={images}
-        renderItem={({ item }: { item: ImageItem }) => (
-          <View style={styles.imageContainer}>
-            <Image source={{ uri: item.url }} style={styles.image} />
-            <Text style={styles.text}>File: {item.key}</Text>
-            <Text style={styles.text}>Size: {item.size} bytes</Text>
-            <Text style={styles.text} testID={`uploaded-time-${item.key}`}>
-              Uploaded: {new Date(item.lastModified).toLocaleString()}
-            </Text>
-          </View>
-        )}
-        keyExtractor={(item) => item.key}
-        numColumns={numColumns} // 화면 크기에 맞는 열 수
-        columnWrapperStyle={numColumns > 1 ? styles.columnWrapperStyle : null} // 여러 열일 때만 적용
-        key={numColumns} // numColumns 값에 따라 FlatList를 강제로 리렌더링
-      />
-    </View>
+    <FlatList
+      data={images}
+      renderItem={renderItem}
+      keyExtractor={keyExtractor}
+      numColumns={numColumns}
+      contentContainerStyle={styles.galleryContainer}
+      columnWrapperStyle={isDesktop ? { justifyContent: 'space-between' } : undefined}
+    />
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f9f9f9',
+  galleryContainer: {
     padding: 10,
   },
-  imageContainer: {
-    marginBottom: 20,
+  center: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 10,
-    flex: 1,
   },
-  image: {
-    width: 200,
-    height: 200,
-    marginBottom: 10,
-    borderRadius: 8,
-  },
-  text: {
-    fontSize: 14,
-    color: '#333',
-  },
-  columnWrapperStyle: {
-    justifyContent: 'space-between', // 열 간격 조정
+  noImagesText: {
+    fontSize: 16,
+    color: '#999',
   },
 });
 

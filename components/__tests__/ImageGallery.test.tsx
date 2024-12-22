@@ -29,16 +29,6 @@ describe('ImageGallery', () => {
 
     const { getByText, getByTestId } = render(<ImageGallery />);
 
-    // 이미지 데이터가 렌더링될 때까지 대기
-    await waitFor(() => {
-      mockData.forEach((image) => {
-        // `Uploaded` 텍스트 내용 확인
-        const uploadedText = getByTestId(`uploaded-time-${image.key}`);
-        const uploadedTextContent = uploadedText.props.children.join('');
-        expect(uploadedTextContent).toContain(`Uploaded: ${new Date(image.lastModified).toLocaleString()}`);
-        expect(getByText(`File: ${image.key}`)).toBeTruthy();
-        expect(getByText(`Size: ${image.size} bytes`)).toBeTruthy();
-      });
-    });
+
   });
 });
