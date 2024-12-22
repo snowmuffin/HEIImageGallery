@@ -9,32 +9,8 @@ on:
     branches: [ master ]
 
 jobs:
-  client:
-    name: Test Client (React Native Expo)
-    runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'  # 필요한 Node.js 버전으로 변경
-
-      - name: Install Dependencies
-        working-directory: ./client
-        run: npm install
-
-      - name: Run Tests
-        working-directory: ./client
-        run: npm test
-
-      - name: Build Expo Project
-        working-directory: ./client
-        run: npm run build  # 빌드 스크립트가 있는 경우
-
-  server:
+  test:
     name: Test Server (Express)
     runs-on: ubuntu-latest
 
@@ -45,18 +21,22 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'  # 필요한 Node.js 버전으로 변경
+          node-version: '16'  
 
       - name: Install Dependencies
-        working-directory: ./server
+        working-directory: ./
         run: npm install
 
       - name: Run Tests
-        working-directory: ./server
+        working-directory: ./
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: node server.js
+
+      - name: Run Tests
+        working-directory: .
         run: npm test
 
 
