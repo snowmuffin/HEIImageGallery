@@ -1,28 +1,39 @@
-name: CI for React Native Project
+# .github/workflows/ci.yml
+
+name: CI Workflow
 
 on:
-    push:
-      branches: [ "master" ]
-    pull_request:
-      branches: [ "master" ]
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
 jobs:
+
   test:
+    name: Test Server (Express)
     runs-on: ubuntu-latest
 
     steps:
- 
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
- 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: '16'  
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm install
-      - name: Install dependencies
+
+      - name: Run Tests
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
         run: node server.js
-      - name: Run Jest tests
+
+      - name: Run Tests
         run: npm test
+
+
