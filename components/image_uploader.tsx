@@ -62,10 +62,6 @@ const ImageUploadForm = () => {
 
   return (
     <View style={styles.container}>
-      <Button
-        title="Test Alert"
-        onPress={() => Alert.alert('Test', 'This is a test alert')}
-      />
       <Button title="이미지 선택" onPress={pickImage} />
       {selectedImage && selectedImage.assets && (
         <Image
