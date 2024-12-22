@@ -2,25 +2,21 @@ const express = require('express');
 const AWS = require('aws-sdk');
 const multer = require('multer');
 const cors = require('cors');
-require('dotenv').config(); // .env 파일에서 환경 변수 로드
+require('dotenv').config();
 
 const app = express();
 const port = 3000;
 
-// S3 클라이언트 설정
 const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID, // 환경 변수에서 가져옴
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY, // 환경 변수에서 가져옴
-  region: process.env.AWS_REGION, // 환경 변수에서 가져옴
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
 });
 
-// 파일 업로드 미들웨어 설정
 const upload = multer();
 
-// CORS 활성화
 app.use(cors());
 
-// POST 요청 처리 (클라이언트 -> 프록시 서버 -> S3)
 app.post('/upload', upload.single('file'), (req, res) => {
   const file = req.file;
   if (!file) {
@@ -28,10 +24,10 @@ app.post('/upload', upload.single('file'), (req, res) => {
   }
 
   const params = {
-    Bucket: 'hei-test-storage', // S3 버킷 이름
-    Key: file.originalname, // 업로드 파일 이름
+    Bucket: 'hei-test-storage',
+    Key: file.originalname,
     Body: file.buffer,
-    ContentType: file.mimetype, // MIME 타입
+    ContentType: file.mimetype,
   };
 
   s3.upload(params, (err, data) => {
@@ -44,20 +40,60 @@ app.post('/upload', upload.single('file'), (req, res) => {
   });
 });
 
-// S3 이미지 목록 가져오기
 app.get('/images', async (req, res) => {
   const params = {
     Bucket: 'hei-test-storage',
+    MaxKeys: 1000,
   };
 
+  const validImageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+  let images = [];
+  let nonImages = [];
+  let isTruncated = true;
+  let continuationToken = null;
+
   try {
-    const data = await s3.listObjectsV2(params).promise();
-    const images = data.Contents.map((item) => ({
-      key: item.Key,
-      size: item.Size,
-      lastModified: item.LastModified,
-      url: `https://hei-test-storage.s3.ap-northeast-2.amazonaws.com/${item.Key}`,
-    }));
+    while (isTruncated) {
+      const currentParams = { ...params };
+      if (continuationToken) {
+        currentParams.ContinuationToken = continuationToken;
+      }
+
+      const data = await s3.listObjectsV2(currentParams).promise();
+
+      console.log(`총 로드된 파일 수: ${data.Contents.length}`);
+
+      const filteredImages = data.Contents.filter((item) => {
+        const extension = item.Key.split('.').pop()?.toLowerCase();
+        return extension && validImageExtensions.includes(extension);
+      }).map((item) => ({
+        key: item.Key,
+        size: item.Size,
+        lastModified: item.LastModified,
+        url: `https://hei-test-storage.s3.ap-northeast-2.amazonaws.com/${item.Key}`,
+        isImage: true,
+      }));
+
+      const filteredNonImages = data.Contents.filter((item) => {
+        const extension = item.Key.split('.').pop()?.toLowerCase();
+        return !extension || !validImageExtensions.includes(extension);
+      }).map((item) => ({
+        key: item.Key,
+        size: item.Size,
+        lastModified: item.LastModified,
+        url: `https://hei-test-storage.s3.ap-northeast-2.amazonaws.com/${item.Key}`,
+        isImage: false,
+      }));
+
+      images = images.concat(filteredImages);
+      nonImages = nonImages.concat(filteredNonImages);
+
+      console.log(`현재까지 로드된 이미지 수: ${images.length}`);
+      console.log(`현재까지 로드된 비이미지 파일 수: ${nonImages.length}`);
+
+      isTruncated = data.IsTruncated;
+      continuationToken = data.NextContinuationToken;
+    }
 
     res.status(200).json(images);
   } catch (error) {
@@ -66,7 +102,6 @@ app.get('/images', async (req, res) => {
   }
 });
 
-// 서버 실행
 app.listen(port, '0.0.0.0', () => {
   console.log(`Proxy server is running on http://localhost:${port}`);
 });
