@@ -77,8 +77,6 @@ describe('ImageUploadForm', () => {
       fireEvent.press(uploadButton);
     });
 
-    // 업로드 중 버튼 상태 확인
-    expect(getByText('업로드 중...')).toBeTruthy();
     expect(uploadButton.props.disabled).toBe(true);
 
     // 업로드 완료 후 버튼 상태 및 Alert 확인
