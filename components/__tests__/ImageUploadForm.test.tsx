@@ -25,7 +25,9 @@ describe('ImageUploadForm', () => {
     });
     console.log('[Mock] ImagePicker 설정 완료');
 
-    const { getByText, queryByTestId } = render(<ImageUploadForm />);
+    const { getByText, queryByTestId } = render(<ImageUploadForm onUploadSuccess={function (): void {
+      throw new Error('Function not implemented.');
+    } } />);
     console.log('[Render] 컴포넌트 렌더링 완료');
 
     // 이미지 선택 버튼 클릭
@@ -53,7 +55,9 @@ describe('ImageUploadForm', () => {
     });
     console.log('[Mock] ImagePicker 취소 상태 설정 완료');
 
-    const { getByText, queryByTestId } = render(<ImageUploadForm />);
+    const { getByText, queryByTestId } = render(<ImageUploadForm onUploadSuccess={function (): void {
+      throw new Error('Function not implemented.');
+    } } />);
     console.log('[Render] 컴포넌트 렌더링 완료');
 
     // 이미지 선택 버튼 클릭
@@ -88,7 +92,9 @@ describe('ImageUploadForm', () => {
     );
     console.log('[Mock] fetch 모의 응답 설정 완료');
 
-    const { getByText, queryByTestId } = render(<ImageUploadForm />);
+    const { getByText, queryByTestId } = render(<ImageUploadForm onUploadSuccess={function (): void {
+      throw new Error('Function not implemented.');
+    } } />);
     console.log('[Render] 컴포넌트 렌더링 완료');
 
     // 이미지 선택 버튼 클릭
