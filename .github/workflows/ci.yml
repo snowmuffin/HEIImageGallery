@@ -62,6 +62,8 @@ jobs:
           echo "Server did not start in time." && exit 1
 
       - name: Server Tests
+        env:
+          PROXY_SERVER_URL: http://localhost:3000/upload
         run: node uploadImages.js
 
 
