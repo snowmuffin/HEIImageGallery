@@ -86,16 +86,16 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ isDesktop }) => {
   // 이미지 리스트를 렌더링하는 FlatList 컴포넌트
   return (
     <FlatList
-      data={images} // 데이터 소스
-      renderItem={renderItem} // 각 항목 렌더링 함수
-      keyExtractor={keyExtractor} // 고유 키 추출
-      numColumns={numColumns} // 열 개수 설정
+      data={images}
+      renderItem={renderItem}
+      keyExtractor={keyExtractor}
+      numColumns={numColumns}
       contentContainerStyle={[
         styles.galleryContainer,
-        { paddingHorizontal: imageMargin }, // 갤러리 패딩 설정
+        { paddingHorizontal: imageMargin },
       ]}
       columnWrapperStyle={
-        isDesktop ? { marginHorizontal: imageMargin / 2 } : undefined // 열 간 마진 설정
+        isDesktop ? { marginHorizontal: imageMargin / 2 } : undefined
       }
     />
   );
