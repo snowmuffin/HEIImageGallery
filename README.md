@@ -28,8 +28,8 @@
 
 ### 1. 저장소 클론
    ```bash
-   git clone [https://github.com/snowmuffin/HEIImageGallery] # 프로젝트 저장소 클론
-   cd [HEIImageGallery]         # 프로젝트 디렉토리로 이동
+   git clone https://github.com/snowmuffin/HEIImageGallery # 프로젝트 저장소 클론
+   cd HEIImageGallery         # 프로젝트 디렉토리로 이동
    ```
 
 ### 2. 의존성 설치
