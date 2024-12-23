@@ -37,7 +37,7 @@ const App = () => {
           </View>
           <View style={styles.gallerySection}>
             <Text style={styles.title}>Gallery</Text>
-            <ImageGallery isDesktop={isDesktop} />
+            <ImageGallery isDesktop={false}/>
           </View>
         </View>
       )}
@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
   },
   flexColumn: {
     flexDirection: 'column',
+    flex: 2,
     gap: 20,
     flexGrow: 1,
   },
@@ -69,7 +70,7 @@ const styles = StyleSheet.create({
   },
   mainContent: {
     flex: 2,
-    padding: 20,
+    padding: 10,
     backgroundColor: '#fff',
     borderRadius: 8,
   },
@@ -81,8 +82,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   gallerySection: {
+    width: '100%',
+    alignItems: 'flex-start',
     backgroundColor: '#fff',
-    padding: 20,
+    padding: 1,
     borderRadius: 8,
   },
   title: {
