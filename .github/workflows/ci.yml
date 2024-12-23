@@ -51,6 +51,10 @@ jobs:
           echo $! > server.pid  # 서버 PID 저장
 
 
+      - name: Server Tests
+        run: node uploadimages.js
+
+
       - name: Wait for Server to be Ready
         run: |
           # 최대 30초까지 대기
