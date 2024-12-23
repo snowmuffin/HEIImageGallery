@@ -51,11 +51,6 @@ jobs:
           node server.js &
           echo $! > server.pid  # 서버 PID 저장
 
-
-      - name: Server Tests
-        run: node uploadImages.js
-
-
       - name: Wait for Server to be Ready
         run: |
           # 최대 30초까지 대기
@@ -65,6 +60,12 @@ jobs:
             sleep 1
           done
           echo "Server did not start in time." && exit 1
+
+      - name: Server Tests
+        run: node uploadImages.js
+
+
+
 
   
       - name: Run Tests
