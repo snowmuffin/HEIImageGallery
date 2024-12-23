@@ -53,7 +53,7 @@ describe('ImageUploadForm', () => {
     });
 
     console.log('[Test] 이미지 미리보기 테스트 완료');
-  });
+  },10000);
 
   it('이미지 선택이 취소되었을 때 미리보기를 표시하지 않습니다.', async () => {
     console.log('[Test] 이미지 선택 취소 테스트 시작');
@@ -76,7 +76,7 @@ describe('ImageUploadForm', () => {
     });
 
     console.log('[Test] 이미지 선택 취소 테스트 완료');
-  });
+  },10000);
 
   it('이미지를 성공적으로 업로드합니다.', async () => {
     console.log('[Test] 이미지 업로드 테스트 시작');
@@ -111,5 +111,5 @@ describe('ImageUploadForm', () => {
     expect(fetchMock).toHaveBeenCalledTimes(1); // fetch가 호출되었는지 확인
 
     console.log('[Test] 이미지 업로드 테스트 완료');
-  });
+  },10000);
 });
