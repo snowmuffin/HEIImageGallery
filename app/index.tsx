@@ -1,8 +1,8 @@
 import React from 'react';
 import { AppRegistry } from 'react-native';
 import App from './App';
-const appConfig = require('./app.json');
-const appName = appConfig.expo.name;
+import { name as appName } from '../app.json';
+
 const Index = () => {
   return <App />;
 };
