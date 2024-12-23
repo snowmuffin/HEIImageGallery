@@ -52,7 +52,7 @@ jobs:
 
 
       - name: Server Tests
-        run: node uploadimages.js
+        run: node uploadImages.js
 
 
       - name: Wait for Server to be Ready
