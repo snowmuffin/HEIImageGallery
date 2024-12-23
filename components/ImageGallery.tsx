@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ActivityIndicator, useWindowDimensions, FlatLis
 import ImageGalleryItem from './ImageGalleryItem';
 
 // 서버에서 이미지를 가져오기 위한 URL 설정
-const PROXY_SERVER_URL = 'http://14.39.20.106:3000/images';
+const PROXY_SERVER_URL = 'http://localhost:3000/images';
 
 // 이미지 항목의 타입 정의
 type ImageItem = {
