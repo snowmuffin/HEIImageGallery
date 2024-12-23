@@ -46,7 +46,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
           S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
-          PROXY_SERVER_URL : http://localhost:3000/upload
+          PROXY_SERVER_URL: http://localhost:3000/upload
         run: |
           node server.js &
           echo $! > server.pid  # 서버 PID 저장
